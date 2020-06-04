@@ -1,17 +1,16 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
-  entry: {
-    index: './src/index.js',
-  },
+  entry: path.resolve(__dirname, 'src/index'),
   output: {
-    path: `${__dirname}/dist`,
-    publicPath: '/',
-    filename: '[name].js',
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js',
   },
   resolve: {
-    extensions: ['.js', '.jsx']
+    extensions: [ '.js', '.jsx' ],
   },
   module: {
     rules: [
@@ -29,6 +28,17 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: 'src/index.html', //source html
+    }),
+    new Dotenv({
+      path: './.env',
+      safe: true,
+    }),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+    }),
+    new webpack.EnvironmentPlugin({
+      NODE_ENV: 'development', // use 'development' unless process.env.NODE_ENV is defined
+      DEBUG: false,
     }),
   ],
 };
